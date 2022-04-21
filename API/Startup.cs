@@ -34,6 +34,11 @@ namespace API
             services.AddDbContext<DataContext>(opt=>{
                 opt.UseSqlite(_Config.GetConnectionString("DefaultConnection"));
             });
+            services.AddCors(opt=>{
+                opt.AddPolicy("CrosPolicy",policy=>{
+                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+                });
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApplication1", Version = "v1" });
@@ -53,7 +58,8 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+             app.UseCors("CrosPolicy");
+             app.UseHsts();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
